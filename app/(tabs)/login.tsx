@@ -10,6 +10,8 @@ import {
   ScrollView,
 } from "react-native"
 import { login } from "@/services/authService";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 
 const Login = () => {
   const [email, setEmail] = useState("")
@@ -48,21 +50,21 @@ const Login = () => {
   return (
     <KeyboardAvoidingView className="flex-1 bg-white" behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-        <View className="flex-1 justify-center px-8 py-12">
+        <ThemedView className="flex-1 justify-center px-8 py-12">
           {/* Header */}
           <View className="items-center mb-12">
             <View className="w-20 h-20 bg-blue-500 rounded-full items-center justify-center mb-6">
               <Text className="text-white text-2xl font-bold">L</Text>
             </View>
-            <Text className="text-3xl font-bold text-gray-800 mb-2">Bienvenido</Text>
-            <Text className="text-gray-600 text-center">Inicia sesión en tu cuenta</Text>
+            <ThemedText className="text-3xl font-bold mb-2">Bienvenido</ThemedText>
+            <ThemedText className="text-center">Inicia sesión en tu cuenta</ThemedText>
           </View>
 
           {/* Form */}
           <View className="space-y-6">
             {/* Email Input */}
             <View>
-              <Text className="text-gray-700 text-sm font-medium mb-2">Email</Text>
+              <ThemedText className="text-sm font-medium mb-2">Email</ThemedText>
               <TextInput
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 text-base"
                 placeholder="tu@email.com"
@@ -77,7 +79,7 @@ const Login = () => {
 
             {/* Password Input */}
             <View>
-              <Text className="text-gray-700 text-sm font-medium mb-2">Contraseña</Text>
+              <ThemedText className="text-sm font-medium mb-2">Contraseña</ThemedText>
               <TextInput
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 text-base"
                 placeholder="••••••••"
@@ -113,26 +115,7 @@ const Login = () => {
             <Text className="mx-4 text-gray-500 text-sm">o</Text>
             <View className="flex-1 h-px bg-gray-300" />
           </View>
-
-          {/* Social Login Buttons */}
-          <View className="space-y-3">
-            <TouchableOpacity className="w-full py-3 border border-gray-300 rounded-lg items-center flex-row justify-center">
-              <Text className="text-gray-700 text-base font-medium ml-2">Continuar con Google</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity className="w-full py-3 border border-gray-300 rounded-lg items-center flex-row justify-center">
-              <Text className="text-gray-700 text-base font-medium ml-2">Continuar con Apple</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Sign Up Link */}
-          <View className="flex-row justify-center mt-8">
-            <Text className="text-gray-600 text-base">¿No tienes cuenta? </Text>
-            <TouchableOpacity onPress={handleSignUp}>
-              <Text className="text-blue-500 text-base font-medium">Regístrate</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        </ThemedView>
       </ScrollView>
     </KeyboardAvoidingView>
   )

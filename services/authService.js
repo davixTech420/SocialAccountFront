@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:3000";
+const API = "https://datech.alwaysdata.net/SocialAccount";
 
 export const login = async (email, password) => {
   try {
