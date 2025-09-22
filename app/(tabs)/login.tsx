@@ -9,35 +9,23 @@ import {
   Platform,
   ScrollView,
 } from "react-native"
-import { login } from "@/services/authService";
+import { useAuth } from "@/contexts/AuthContext";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 const Login = () => {
+  const {login} = useAuth();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Por favor completa todos los campos")
-      return
+    try {
+      await login(email, password);
+    } catch (err) {
+      console.error("Error al iniciar sesión:", err);
     }
-
-    setIsLoading(true)
-
-    await login(email, password)
-      .then(() => {
-        Alert.alert("Éxito", "Has iniciado sesión correctamente")
-      })
-      .catch((error) => {
-        Alert.alert("Error", error.message || "Error al iniciar sesión")
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
-    
-  }
+  };
 
   const handleForgotPassword = () => {
     Alert.alert("Recuperar contraseña", "Funcionalidad en desarrollo")

@@ -1,0 +1,77 @@
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
+
+const port = 3000;
+const baseURL = "http://192.168.125.31:" + port + "/admin";
+
+// Helpers para manejar el token de forma multiplataforma
+const setToken = async (key, value) => {
+  if (Platform.OS === "web") {
+    await localStorage.setItem(key, value);
+  } else {
+    await SecureStore.setItemAsync(key, value);
+  }
+};
+
+const getToken = async (key) => {
+  if (Platform.OS === "web") {
+    return await localStorage.getItem(key);
+  } else {
+    return await SecureStore.getItemAsync(key);
+  }
+};
+
+const deleteToken = async (key) => {
+  if (Platform.OS === "web") {
+    await localStorage.removeItem(key);
+  } else {
+    await SecureStore.deleteItemAsync(key);
+  }
+};
+
+// Función genérica para hacer peticiones al backend
+const makeRequest = async (method, url, data = null) => {
+  try {
+    const token = await getToken("auth_token");
+    if (!token) {
+      throw new Error("No se encontró el token");
+    }
+
+    const config = {
+      method,
+      url: `${baseURL}${url}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data) {
+      config.data = data;
+    }
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error en makeRequest:", error);
+    throw error;
+  }
+};
+
+export { makeRequest, setToken, getToken, deleteToken };
+
+
+
+export const getUsers = async () => {
+  return await makeRequest("GET", "/users");
+}
+export const createUser = async (user) => {
+  return await makeRequest("POST", "/users", user);
+}
+export const updateUser = async (id, user) => {
+  return await makeRequest("PUT", `/users/${id}`, user);
+}
+export const deleteUser = async (id) => {
+  return await makeRequest("DELETE", `/users/${id}`);
+}
