@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 const port = 3000;
-const baseURL = "http://192.168.125.31:" + port + "/admin";
+const baseURL = "http://localhost:" + port + "/admin";
 
 // Helpers para manejar el token de forma multiplataforma
 const setToken = async (key, value) => {
@@ -75,3 +75,31 @@ export const updateUser = async (id, user) => {
 export const deleteUser = async (id) => {
   return await makeRequest("DELETE", `/users/${id}`);
 }
+
+
+export const getCredentials = async () => {
+  return await makeRequest("GET", "/credentials");
+}
+export const createCredentials = async (credential) => {
+  return await makeRequest("POST", "/credentials", credential);
+}
+export const updateCredentials = async (id, credential) => {
+  return await makeRequest("PUT", `/credentials/${id}`, credential);
+}
+export const deleteCredentials = async (id) => {
+  return await makeRequest("DELETE", `/credentials/${id}`);
+}
+
+
+
+
+export const loginGoogle = async (tokens) => {
+  return await axios.get("http://localhost:3000/auth"/* ,{
+    headers:{
+      Authorization: `Bearer ${getToken("auth_token")}`
+    }
+  } */);
+}
+
+
+

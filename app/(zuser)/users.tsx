@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View } from "react-native";
 import CrudTable from "@/components/CrudTable";
-
 import { getUsers, createUser,updateUser,deleteUser } from "@/services/adminService";
 
 // Ejemplo de uso del componente
@@ -66,7 +65,7 @@ const ExampleUsage = () => {
         onCreate={handleCreate}
         onUpdate={handleUpdate}
         onDelete={handleDelete}
-        searchableFields={["email", "password"]}
+        searchableFields={["email"]}
         title="Usuarios"
         itemsPerPage={5}
       />
