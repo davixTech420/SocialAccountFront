@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 import { router} from "expo-router"
 
 const port = 3000;
-const baseURL = "http://192.168.0.111:" + port + "/admin";
+const baseURL = "http://localhost:" + port + "/admin";
 
 // Helpers para manejar el token de forma multiplataforma
 const setToken = async (key, value) => {
@@ -92,11 +92,30 @@ export const deleteCredentials = async (id) => {
 }
 
 
-
-
 export const loginGoogle = async () => {
-  router.push("http://192.168.0.111:3000/auth");
+  router.push("http://localhost:3000/auth");
 }
+
+export const uploadVideoToServer = async (data) => {
+  try {
+   const token = await getToken("auth_token");
+    if (!token) {
+      throw new Error("No se encontró el token");
+    }
+    const response = await axios.post(`http://localhost:3000/socialAccounts/upload-video`,data, {
+      headers: {
+        Authorization: `Bearer ${token}`,/* 
+        "Content-Type": "multipart/form-data", */
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
 
 
 

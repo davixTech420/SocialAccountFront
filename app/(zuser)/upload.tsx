@@ -1,9 +1,8 @@
-"use client"
-
 import { useState } from "react"
 import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from "react-native"
 import { Video } from "expo-av"
 import * as ImagePicker from "expo-image-picker"
+import { uploadVideoToServer } from "@/services/adminService"
 
 interface VideoUploaderProps {
   endpoint: string
@@ -77,13 +76,7 @@ export default function VideoUploader({ endpoint, onUploadSuccess, onUploadError
         name: "video.mp4",
       } as any)
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      const response = await uploadVideoToServer(formData);
 
       if (response.ok) {
         const result = await response.json()
