@@ -13,7 +13,8 @@ export default function DrawerLayout() {
   const { logout } = useAuth();
 
   return (
-    <ProtectedRoute>
+    <>
+    {/* <ProtectedRoute> */}
       <Drawer
         screenOptions={{
           headerShown: true,
@@ -81,6 +82,7 @@ export default function DrawerLayout() {
           }}
         />
       </Drawer>
-    </ProtectedRoute>
+    {/* </ProtectedRoute> */}
+    </>
   );
 }
