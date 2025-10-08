@@ -102,10 +102,11 @@ export const uploadVideoToServer = async (data) => {
     if (!token) {
       throw new Error("No se encontró el token");
     }
+
     const response = await axios.post(`http://localhost:3000/socialAccounts/upload-video`,data, {
       headers: {
-        Authorization: `Bearer ${token}`,/* 
-        "Content-Type": "multipart/form-data", */
+        Authorization: `Bearer ${token}`,
+        /* "Content-Type": "multipart/form-data", */
       },
     });
     return response.data;

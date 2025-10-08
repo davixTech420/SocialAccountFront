@@ -1,211 +1,11 @@
-/* import { useState } from "react"
-import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from "react-native"
-import { Video } from "expo-av"
-import * as ImagePicker from "expo-image-picker"
-import { uploadVideoToServer } from "@/services/adminService"
-
-interface VideoUploaderProps {
-  endpoint: string
-  onUploadSuccess?: (response: any) => void
-  onUploadError?: (error: string) => void
-}
-
-export default function VideoUploader({ endpoint, onUploadSuccess, onUploadError }: VideoUploaderProps) {
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
-
-  const pickVideo = async () => {
-    try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-
-      if (status !== "granted") {
-        Alert.alert("Error", "Se necesitan permisos para acceder a la galería")
-        return
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-        allowsEditing: true,
-        quality: 1,
-      })
-
-      if (!result.canceled && result.assets[0]) {
-        setSelectedVideo(result.assets[0].uri)
-      }
-    } catch (error) {
-      Alert.alert("Error", "No se pudo seleccionar el video")
-    }
-  }
-
-  const recordVideo = async () => {
-    try {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync()
-
-      if (status !== "granted") {
-        Alert.alert("Error", "Se necesitan permisos para acceder a la cámara")
-        return
-      }
-
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-        allowsEditing: true,
-        quality: 1,
-      })
-
-      if (!result.canceled && result.assets[0]) {
-        setSelectedVideo(result.assets[0].uri)
-      }
-    } catch (error) {
-      Alert.alert("Error", "No se pudo grabar el video")
-    }
-  }
-
-  const uploadVideo = async () => {
-    if (!selectedVideo) {
-      Alert.alert("Error", "Selecciona un video primero")
-      return
-    }
-
-    setUploading(true)
-
-    try {
-      const formData = new FormData()
-      formData.append("video", {
-        uri: selectedVideo,
-        type: "video/mp4",
-        name: "video.mp4",
-      } as any)
-
-      const response = await uploadVideoToServer(formData);
-
-      if (response.ok) {
-        const result = await response.json()
-        Alert.alert("Éxito", "Video subido correctamente")
-        onUploadSuccess?.(result)
-        setSelectedVideo(null)
-      } else {
-        throw new Error("Error en la subida")
-      }
-    } catch (error) {
-      const errorMessage = "Error al subir el video"
-      Alert.alert("Error", errorMessage)
-      onUploadError?.(errorMessage)
-    } finally {
-      setUploading(false)
-    }
-  }
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Subir Video</Text>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={pickVideo}>
-          <Text style={styles.buttonText}>Seleccionar de Galería</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={recordVideo}>
-          <Text style={styles.buttonText}>Grabar Video</Text>
-        </TouchableOpacity>
-      </View>
-
-      {selectedVideo && (
-        <View style={styles.previewContainer}>
-          <Text style={styles.previewTitle}>Vista previa:</Text>
-          <Video
-            source={{ uri: selectedVideo }}
-            style={styles.video}
-            useNativeControls
-            resizeMode="contain"
-            isLooping
-          />
-
-          <TouchableOpacity
-            style={[styles.uploadButton, uploading && styles.uploadButtonDisabled]}
-            onPress={uploadVideo}
-            disabled={uploading}
-          >
-            {uploading ? (
-              <ActivityIndicator color="#ffffff" />
-            ) : (
-              <Text style={styles.uploadButtonText}>Subir Video</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 12,
-    margin: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#333",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: "#007bff",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    flex: 0.48,
-  },
-  buttonText: {
-    color: "#ffffff",
-    textAlign: "center",
-    fontWeight: "600",
-  },
-  previewContainer: {
-    marginTop: 20,
-  },
-  previewTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 10,
-    color: "#333",
-  },
-  video: {
-    width: "100%",
-    height: 200,
-    backgroundColor: "#000",
-    borderRadius: 8,
-  },
-  uploadButton: {
-    backgroundColor: "#28a745",
-    paddingVertical: 15,
-    borderRadius: 8,
-    marginTop: 15,
-    alignItems: "center",
-  },
-  uploadButtonDisabled: {
-    backgroundColor: "#6c757d",
-  },
-  uploadButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-})
- */
-"use client"
-
-import type React from "react"
+/* import type React from "react"
 import { useState } from "react"
 import { View, Text, ScrollView, TouchableOpacity, Image, Modal, Pressable } from "react-native"
 import Animated, { FadeInDown, SlideInDown } from "react-native-reanimated"
+import * as ImagePicker from "expo-image-picker"
+import { uploadVideoToServer } from "@/services/adminService"
+
+
 
 const PlusIcon = () => (
   <View className="w-6 h-6 items-center justify-center">
@@ -359,6 +159,10 @@ const UploadModal = ({
               <Text className="text-white text-2xl font-bold mb-2">Selecciona un video</Text>
               <Text className="text-gray-400 text-base mb-6">Elige el video que quieres subir</Text>
 
+
+
+
+
               <ScrollView className="mb-4" showsVerticalScrollIndicator={false}>
                 {videos.map((video, index) => (
                   <Animated.View key={video.id} entering={FadeInDown.delay(index * 50).springify()}>
@@ -490,7 +294,7 @@ export default function Upload() {
 
   return (
     <View className="flex-1 bg-slate-950">
-      {/* Header */}
+ 
       <View className="pt-14 pb-4 px-6 flex-row items-center justify-between border-b border-slate-800">
         <Text className="text-white text-2xl font-bold">Sube Video</Text>
         <TouchableOpacity
@@ -501,7 +305,7 @@ export default function Upload() {
         </TouchableOpacity>
       </View>
 
-      {/* Lista de Videos */}
+
       <ScrollView className="flex-1 px-4 pt-4">
         {videos.map((video, index) => (
           <VideoItem key={video.id} video={video} index={index} />
@@ -516,4 +320,474 @@ export default function Upload() {
       />
     </View>
   )
+}
+ */
+
+
+import type React from "react";
+import { useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Modal,
+  Pressable,
+  Alert,
+} from "react-native";
+import Animated, { FadeInDown, SlideInDown } from "react-native-reanimated";
+import { Video } from "expo-av";
+import * as ImagePicker from "expo-image-picker";
+import { uploadVideoToServer } from "@/services/adminService";
+
+const PlusIcon = () => (
+  <View className="w-6 h-6 items-center justify-center">
+    <View className="absolute w-4 h-0.5 bg-cyan-400" />
+    <View className="absolute w-0.5 h-4 bg-cyan-400" />
+  </View>
+);
+
+const CheckIcon = ({ checked }: { checked: boolean }) => (
+  <View
+    className={`w-6 h-6 rounded border-2 items-center justify-center ${
+      checked ? "bg-cyan-500 border-cyan-500" : "border-gray-600"
+    }`}
+  >
+    {checked && <Text className="text-white text-xs font-bold">✓</Text>}
+  </View>
+);
+
+const InstagramIcon = () => (
+  <View className="w-10 h-10 rounded-xl bg-pink-600 items-center justify-center">
+    <View className="w-6 h-6 rounded-lg border-2 border-white" />
+  </View>
+);
+
+const TikTokIcon = () => (
+  <View className="w-10 h-10 rounded-xl bg-black items-center justify-center">
+    <Text className="text-white font-bold text-lg">TT</Text>
+  </View>
+);
+
+const YouTubeIcon = () => (
+  <View className="w-10 h-10 rounded-xl bg-red-600 items-center justify-center">
+    <Text className="text-white font-bold text-xl">▶</Text>
+  </View>
+);
+
+const FacebookIcon = () => (
+  <View className="w-10 h-10 rounded-xl bg-blue-600 items-center justify-center">
+    <Text className="text-white font-bold text-2xl">f</Text>
+  </View>
+);
+
+const TwitterIcon = () => (
+  <View className="w-10 h-10 rounded-xl bg-sky-500 items-center justify-center">
+    <Text className="text-white font-bold text-xl">𝕏</Text>
+  </View>
+);
+
+interface SocialNetwork {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+}
+
+const VideoItem = ({ video, index }: { video: any; index: number }) => (
+  <Animated.View
+    entering={FadeInDown.delay(index * 100).springify()}
+    className="flex-row items-center p-4 mb-2 bg-slate-800/50 rounded-xl"
+  >
+    <Image
+      source={{ uri: video.thumbnail }}
+      className="w-16 h-16 rounded-lg"
+      resizeMode="cover"
+    />
+    <View className="flex-1 ml-4">
+      <Text className="text-white text-base font-medium">{video.title}</Text>
+      <Text className="text-gray-400 text-sm mt-1">by {video.author}</Text>
+    </View>
+  </Animated.View>
+);
+
+const VideoSourceModal = ({
+  visible,
+  onClose,
+  onSelectFromFiles,
+  onRecordVideo,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onSelectFromFiles: () => void;
+  onRecordVideo: () => void;
+}) => {
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View className="flex-1 bg-black/70 justify-end">
+        <Pressable className="flex-1" onPress={onClose} />
+        <Animated.View
+          entering={SlideInDown.springify()}
+          className="bg-slate-900 rounded-t-3xl p-6"
+        >
+          <View className="w-12 h-1 bg-gray-600 rounded-full self-center mb-6" />
+
+          <Text className="text-white text-2xl font-bold mb-2">
+            Selecciona un video
+          </Text>
+          <Text className="text-gray-400 text-base mb-6">
+            ¿Cómo quieres obtener tu video?
+          </Text>
+
+          <TouchableOpacity
+            className="flex-row items-center p-5 mb-3 bg-slate-800 rounded-xl active:bg-slate-700"
+            onPress={onSelectFromFiles}
+          >
+            <View className="w-12 h-12 bg-cyan-500/20 rounded-xl items-center justify-center mr-4">
+              <Text className="text-cyan-400 text-2xl">📁</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-white text-lg font-bold">
+                Seleccionar de archivos
+              </Text>
+              <Text className="text-gray-400 text-sm">
+                Elige un video de tu galería
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row items-center p-5 mb-3 bg-slate-800 rounded-xl active:bg-slate-700"
+            onPress={onRecordVideo}
+          >
+            <View className="w-12 h-12 bg-red-500/20 rounded-xl items-center justify-center mr-4">
+              <Text className="text-red-400 text-2xl">🎥</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-white text-lg font-bold">Grabar video</Text>
+              <Text className="text-gray-400 text-sm">
+                Usa la cámara para grabar
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="p-4 bg-slate-700 rounded-xl mt-4 active:bg-slate-600"
+            onPress={onClose}
+          >
+            <Text className="text-white text-center text-lg font-bold">
+              Cancelar
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+};
+
+const UploadModal = ({
+  visible,
+  onClose,
+  videoUri,
+  onConfirm,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  videoUri: string | null;
+  onConfirm: (networks: string[]) => void;
+}) => {
+  const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
+
+  const socialNetworks: SocialNetwork[] = [
+    { id: "instagram", name: "Instagram", icon: <InstagramIcon /> },
+    { id: "tiktok", name: "TikTok", icon: <TikTokIcon /> },
+    { id: "youtube", name: "YouTube", icon: <YouTubeIcon /> },
+    { id: "facebook", name: "Facebook", icon: <FacebookIcon /> },
+    { id: "twitter", name: "Twitter", icon: <TwitterIcon /> },
+  ];
+
+  const toggleNetwork = (id: string) => {
+    setSelectedNetworks((prev) =>
+      prev.includes(id) ? prev.filter((n) => n !== id) : [...prev, id]
+    );
+  };
+
+  const handleConfirm = () => {
+    if (selectedNetworks.length > 0) {
+      onConfirm(selectedNetworks);
+      setSelectedNetworks([]);
+      onClose();
+    }
+  };
+
+  const handleClose = () => {
+    setSelectedNetworks([]);
+    onClose();
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={handleClose}
+    >
+      <View className="flex-1 bg-black/70 justify-end">
+        <Pressable className="flex-1" onPress={handleClose} />
+        <Animated.View
+          entering={SlideInDown.springify()}
+          className="bg-slate-900 rounded-t-3xl p-6 max-h-[80%]"
+        >
+          <View className="w-12 h-1 bg-gray-600 rounded-full self-center mb-6" />
+
+          {videoUri && (
+            <View className="mb-4 bg-slate-800 rounded-xl overflow-hidden">
+              <Video
+                source={{ uri: videoUri }}
+                className="w-full h-48"
+                useNativeControls
+                resizeMode="contain"
+              />
+            </View>
+          )}
+
+          <Text className="text-white text-2xl font-bold mb-2">
+            Selecciona las redes sociales
+          </Text>
+          <Text className="text-gray-400 text-base mb-6">
+            Elige dónde quieres subir tu video
+          </Text>
+
+          <ScrollView className="mb-4" showsVerticalScrollIndicator={false}>
+            {socialNetworks.map((network, index) => (
+              <Animated.View
+                key={network.id}
+                entering={FadeInDown.delay(index * 50).springify()}
+              >
+                <TouchableOpacity
+                  className="flex-row items-center p-4 mb-3 bg-slate-800 rounded-xl active:bg-slate-700"
+                  onPress={() => toggleNetwork(network.id)}
+                >
+                  {network.icon}
+                  <Text className="text-white text-lg font-medium ml-4 flex-1">
+                    {network.name}
+                  </Text>
+                  <CheckIcon checked={selectedNetworks.includes(network.id)} />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </ScrollView>
+
+          <View className="flex-row gap-3">
+            <TouchableOpacity
+              className="flex-1 bg-slate-700 p-4 rounded-xl active:bg-slate-600"
+              onPress={handleClose}
+            >
+              <Text className="text-white text-center text-lg font-bold">
+                Cancelar
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`flex-1 p-4 rounded-xl ${
+                selectedNetworks.length > 0
+                  ? "bg-cyan-500 active:bg-cyan-600"
+                  : "bg-gray-700"
+              }`}
+              onPress={handleConfirm}
+              disabled={selectedNetworks.length === 0}
+            >
+              <Text className="text-white text-center text-lg font-bold">
+                Subir a {selectedNetworks.length} red
+                {selectedNetworks.length !== 1 ? "es" : ""}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+};
+
+export default function Upload() {
+  const [sourceModalVisible, setSourceModalVisible] = useState(false);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [selectedVideoUri, setSelectedVideoUri] = useState<string | null>(null);
+  const [uploadedVideos, setUploadedVideos] = useState<
+    Array<{ uri: string; networks: string[]; timestamp: number }>
+  >([]);
+
+  const handleSelectFromFiles = async () => {
+    setSourceModalVisible(false);
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permiso denegado",
+        "Necesitamos acceso a tu galería para seleccionar videos"
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setSelectedVideoUri(result.assets[0].uri);
+      setUploadModalVisible(true);
+    }
+  };
+
+  const handleRecordVideo = async () => {
+    setSourceModalVisible(false);
+
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permiso denegado",
+        "Necesitamos acceso a tu cámara para grabar videos"
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setSelectedVideoUri(result.assets[0].uri);
+      setUploadModalVisible(true);
+    }
+  };
+
+  const handleConfirmUpload = async (selectedNetworks: string[]) => {
+    if (!selectedVideoUri) return;
+
+    console.log("[v0] Iniciando subida de video a:", selectedNetworks);
+
+    try {
+      const uploadPromises = selectedNetworks.map(async (network) => {
+        try {
+          console.log(selectedVideoUri);
+          await uploadVideoToServer(selectedVideoUri);
+          console.log(`[v0] Video subido exitosamente a ${network}`);
+          return { network, success: true };
+        } catch (error) {
+          console.error(`[v0] Error subiendo a ${network}:`, error);
+          return { network, success: false, error };
+        }
+      });
+
+      const results = await Promise.all(uploadPromises);
+
+      const successfulUploads = results
+        .filter((r) => r.success)
+        .map((r) => r.network);
+      const failedUploads = results
+        .filter((r) => !r.success)
+        .map((r) => r.network);
+
+      if (successfulUploads.length > 0) {
+        Alert.alert(
+          "¡Éxito!",
+          `Video subido a: ${successfulUploads.join(", ")}${
+            failedUploads.length > 0
+              ? `\n\nFalló en: ${failedUploads.join(", ")}`
+              : ""
+          }`
+        );
+
+        setUploadedVideos((prev) => [
+          ...prev,
+          {
+            uri: selectedVideoUri,
+            networks: successfulUploads,
+            timestamp: Date.now(),
+          },
+        ]);
+      } else {
+        Alert.alert("Error", "No se pudo subir el video a ninguna plataforma");
+      }
+    } catch (error) {
+      console.error("[v0] Error general en la subida:", error);
+      Alert.alert("Error", "Ocurrió un error al subir el video");
+    }
+
+    setSelectedVideoUri(null);
+  };
+
+  return (
+    <View className="flex-1 bg-slate-950">
+      {/* Header */}
+      <View className="pt-14 pb-4 px-6 flex-row items-center justify-between border-b border-slate-800">
+        <Text className="text-white text-2xl font-bold">Sube Video</Text>
+        <TouchableOpacity
+          className="w-10 h-10 items-center justify-center bg-cyan-500/20 rounded-full active:bg-cyan-500/30"
+          onPress={() => setSourceModalVisible(true)}
+        >
+          <PlusIcon />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView className="flex-1 px-4 pt-4">
+        {uploadedVideos.length === 0 ? (
+          <View className="flex-1 items-center justify-center py-20">
+            <Text className="text-gray-500 text-lg">No hay videos subidos</Text>
+            <Text className="text-gray-600 text-sm mt-2">
+              Toca el botón + para comenzar
+            </Text>
+          </View>
+        ) : (
+          uploadedVideos.map((video, index) => (
+            <Animated.View
+              key={video.timestamp}
+              entering={FadeInDown.delay(index * 100).springify()}
+              className="mb-4 bg-slate-800/50 rounded-xl overflow-hidden"
+            >
+              <Video
+                source={{ uri: video.uri }}
+                className="w-full h-48"
+                useNativeControls
+                resizeMode="contain"
+              />
+              <View className="p-4">
+                <Text className="text-white text-sm font-medium mb-2">
+                  Subido a: {video.networks.join(", ")}
+                </Text>
+                <Text className="text-gray-400 text-xs">
+                  {new Date(video.timestamp).toLocaleString()}
+                </Text>
+              </View>
+            </Animated.View>
+          ))
+        )}
+      </ScrollView>
+
+      <VideoSourceModal
+        visible={sourceModalVisible}
+        onClose={() => setSourceModalVisible(false)}
+        onSelectFromFiles={handleSelectFromFiles}
+        onRecordVideo={handleRecordVideo}
+      />
+
+      <UploadModal
+        visible={uploadModalVisible}
+        onClose={() => {
+          setUploadModalVisible(false);
+          setSelectedVideoUri(null);
+        }}
+        videoUri={selectedVideoUri}
+        onConfirm={handleConfirmUpload}
+      />
+    </View>
+  );
 }

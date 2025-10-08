@@ -67,13 +67,7 @@ export default function Analytics() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
-      {/* Header */}
-      <View className="px-4 py-3 flex-row items-center border-b border-slate-800">
-        <TouchableOpacity className="mr-3">
-          <BackIcon />
-        </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold">Analíticas</Text>
-      </View>
+      
 
       {/* Tabs */}
       <View className="px-4 py-3 border-b border-slate-800">

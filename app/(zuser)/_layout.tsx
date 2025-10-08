@@ -14,7 +14,7 @@ export default function DrawerLayout() {
 
   return (
     <>
-    {/* <ProtectedRoute> */}
+    <ProtectedRoute>
       <Drawer
         screenOptions={{
           headerShown: true,
@@ -47,7 +47,7 @@ export default function DrawerLayout() {
         <Drawer.Screen
           name="index"
           options={{
-            title: "Inicio",
+            title: "Dashboard",
             drawerIcon: ({ color, size }) => (
               <Ionicons name="home" size={size} color={color} />
             ),
@@ -82,7 +82,7 @@ export default function DrawerLayout() {
           }}
         />
       </Drawer>
-    {/* </ProtectedRoute> */}
+    </ProtectedRoute>
     </>
   );
 }

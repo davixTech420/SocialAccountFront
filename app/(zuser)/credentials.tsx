@@ -113,20 +113,27 @@ useEffect(() => {
 export default CredentialsPage;
  */
 
-"use client"
-
-import { useState, useEffect } from "react"
-import { View, Text, ScrollView, Switch, ActivityIndicator, Linking, Alert } from "react-native"
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Switch,
+  ActivityIndicator,
+  Linking,
+  Alert,
+} from "react-native";
+import { getCredentials } from "@/services/adminService";
 
 // Tipos
 interface SocialAccount {
-  id: string
-  name: string
-  username?: string
-  isConnected: boolean
-  icon: string
-  color: string
-  authUrl: string
+  id: string;
+  name: string;
+  username?: string;
+  isConnected: boolean;
+  icon: string;
+  color: string;
+  authUrl: string;
 }
 
 // Iconos de redes sociales
@@ -137,14 +144,17 @@ const SocialIcon = ({ name, color }: { name: string; color: string }) => {
     youtube: "▶",
     facebook: "f",
     twitter: "🐦",
-  }
+  };
 
   return (
-    <View className={`w-10 h-10 rounded-full items-center justify-center`} style={{ backgroundColor: color }}>
+    <View
+      className={`w-10 h-10 rounded-full items-center justify-center`}
+      style={{ backgroundColor: color }}
+    >
       <Text className="text-white text-xl font-bold">{icons[name] || "?"}</Text>
     </View>
-  )
-}
+  );
+};
 
 // Componente principal
 export default function Credential() {
@@ -174,7 +184,7 @@ export default function Credential() {
       isConnected: false,
       icon: "youtube",
       color: "#FF0000",
-      authUrl: "https://api.example.com/auth/youtube",
+      authUrl: "http://192.168.0.106:3000/auth",
     },
     {
       id: "facebook",
@@ -194,109 +204,119 @@ export default function Credential() {
       color: "#1DA1F2",
       authUrl: "https://api.example.com/auth/twitter",
     },
-  ])
+  ]);
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   // Fetch del estado de las cuentas conectadas
   useEffect(() => {
-    fetchConnectedAccounts()
-  }, [])
+    fetchConnectedAccounts();
+  }, []);
 
   const fetchConnectedAccounts = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       // Reemplaza con tu endpoint real
-      const response = await fetch("https://api.example.com/user/connected-accounts", {
-        headers: {
-          Authorization: "Bearer YOUR_TOKEN_HERE",
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await getCredentials();
+      console.log(response);
 
-      if (!response.ok) {
-        throw new Error("Error al obtener cuentas conectadas")
+      if (!response) {
+        throw new Error("Error al obtener cuentas conectadas");
       }
 
-      const data = await response.json()
-
       // Actualizar el estado con los datos del servidor
+
       setAccounts((prevAccounts) =>
         prevAccounts.map((account) => {
-          const connectedAccount = data.accounts?.find((a: any) => a.platform === account.id)
+          const connectedAccount = response?.find(
+            (a: any) => a.platform === account.id
+          );
           return {
             ...account,
-            isConnected: connectedAccount?.isConnected || false,
-            username: connectedAccount?.username || "",
-          }
-        }),
-      )
+            isConnected: connectedAccount?.expiresAt || false,
+          };
+        })
+      );
     } catch (error) {
-      console.error("Error fetching connected accounts:", error)
-      Alert.alert("Error", "No se pudieron cargar las cuentas conectadas. Usando datos de ejemplo.")
+      console.error("Error fetching connected accounts:", error);
+      Alert.alert(
+        "Error",
+        "No se pudieron cargar las cuentas conectadas. Usando datos de ejemplo."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Manejar el toggle de conexión
   const handleToggle = async (accountId: string, currentValue: boolean) => {
-    const account = accounts.find((a) => a.id === accountId)
-    if (!account) return
+    const account = accounts.find((a) => a.id === accountId);
+    if (!account) return;
 
     if (!currentValue) {
       // Conectar: redirigir a la URL de autenticación
       try {
-        const canOpen = await Linking.canOpenURL(account.authUrl)
+        const canOpen = await Linking.canOpenURL(account.authUrl);
         if (canOpen) {
-          await Linking.openURL(account.authUrl)
+          await Linking.openURL(account.authUrl);
           // Después de que el usuario regrese, refrescar el estado
           setTimeout(() => {
-            fetchConnectedAccounts()
-          }, 2000)
+            fetchConnectedAccounts();
+          }, 2000);
         } else {
-          Alert.alert("Error", "No se puede abrir la URL de autenticación")
+          Alert.alert("Error", "No se puede abrir la URL de autenticación");
         }
       } catch (error) {
-        console.error("Error opening auth URL:", error)
-        Alert.alert("Error", "No se pudo iniciar el proceso de autenticación")
+        console.error("Error opening auth URL:", error);
+        Alert.alert("Error", "No se pudo iniciar el proceso de autenticación");
       }
     } else {
       // Desconectar
-      Alert.alert("Desconectar cuenta", `¿Estás seguro de que quieres desconectar tu cuenta de ${account.name}?`, [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Desconectar",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const response = await fetch(`https://api.example.com/user/disconnect/${accountId}`, {
-                method: "POST",
-                headers: {
-                  Authorization: "Bearer YOUR_TOKEN_HERE",
-                  "Content-Type": "application/json",
-                },
-              })
-
-              if (response.ok) {
-                setAccounts((prevAccounts) =>
-                  prevAccounts.map((a) => (a.id === accountId ? { ...a, isConnected: false, username: "" } : a)),
-                )
-              } else {
-                throw new Error("Error al desconectar")
-              }
-            } catch (error) {
-              console.error("Error disconnecting account:", error)
-              Alert.alert("Error", "No se pudo desconectar la cuenta")
-            }
+      Alert.alert(
+        "Desconectar cuenta",
+        `¿Estás seguro de que quieres desconectar tu cuenta de ${account.name}?`,
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
           },
-        },
-      ])
+          {
+            text: "Desconectar",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                const response = await fetch(
+                  `https://api.example.com/user/disconnect/${accountId}`,
+                  {
+                    method: "POST",
+                    headers: {
+                      Authorization: "Bearer YOUR_TOKEN_HERE",
+                      "Content-Type": "application/json",
+                    },
+                  }
+                );
+
+                if (response.ok) {
+                  setAccounts((prevAccounts) =>
+                    prevAccounts.map((a) =>
+                      a.id === accountId
+                        ? { ...a, isConnected: false, username: "" }
+                        : a
+                    )
+                  );
+                } else {
+                  throw new Error("Error al desconectar");
+                }
+              } catch (error) {
+                console.error("Error disconnecting account:", error);
+                Alert.alert("Error", "No se pudo desconectar la cuenta");
+              }
+            },
+          },
+        ]
+      );
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -304,7 +324,7 @@ export default function Credential() {
         <ActivityIndicator size="large" color="#3b82f6" />
         <Text className="text-gray-400 mt-4">Cargando cuentas...</Text>
       </View>
-    )
+    );
   }
 
   return (
@@ -317,7 +337,9 @@ export default function Credential() {
 
         {/* Título de sección */}
         <View className="px-6 pb-4">
-          <Text className="text-white text-lg font-semibold">Cuentas conectadas</Text>
+          <Text className="text-white text-lg font-semibold">
+            Cuentas conectadas
+          </Text>
         </View>
 
         {/* Lista de cuentas */}
@@ -333,9 +355,13 @@ export default function Credential() {
               <View className="flex-row items-center flex-1">
                 <SocialIcon name={account.icon} color={account.color} />
                 <View className="ml-4 flex-1">
-                  <Text className="text-white text-base font-medium">{account.name}</Text>
+                  <Text className="text-white text-base font-medium">
+                    {account.name}
+                  </Text>
                   {account.isConnected && account.username && (
-                    <Text className="text-gray-400 text-sm mt-1">@{account.username}</Text>
+                    <Text className="text-gray-400 text-sm mt-1">
+                      @{account.username}
+                    </Text>
                   )}
                 </View>
               </View>
@@ -343,7 +369,9 @@ export default function Credential() {
               {/* Switch */}
               <Switch
                 value={account.isConnected}
-                onValueChange={(value) => handleToggle(account.id, account.isConnected)}
+                onValueChange={(value) =>
+                  handleToggle(account.id, account.isConnected)
+                }
                 trackColor={{ false: "#374151", true: "#3b82f6" }}
                 thumbColor={account.isConnected ? "#ffffff" : "#9ca3af"}
                 ios_backgroundColor="#374151"
@@ -355,10 +383,11 @@ export default function Credential() {
         {/* Información adicional */}
         <View className="px-6 py-6">
           <Text className="text-gray-400 text-sm leading-5">
-            Conecta tus cuentas de redes sociales para publicar contenido directamente desde la app.
+            Conecta tus cuentas de redes sociales para publicar contenido
+            directamente desde la app.
           </Text>
         </View>
       </ScrollView>
     </View>
-  )
+  );
 }
