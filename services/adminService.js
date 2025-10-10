@@ -5,7 +5,7 @@ import { router} from "expo-router"
 
 const port = 3000;
 const baseURL = "http://localhost:" + port + "/admin";
-
+/* const baseURL = "https://preferred-bridgette-datech-4537e683.koyeb.app/admin"; */
 // Helpers para manejar el token de forma multiplataforma
 const setToken = async (key, value) => {
   if (Platform.OS === "web") {
@@ -93,7 +93,7 @@ export const deleteCredentials = async (id) => {
 
 
 export const loginGoogle = async () => {
-  router.push("http://localhost:3000/auth");
+  router.push("https://preferred-bridgette-datech-4537e683.koyeb.app/auth");
 }
 
 export const uploadVideoToServer = async (data) => {
@@ -102,8 +102,7 @@ export const uploadVideoToServer = async (data) => {
     if (!token) {
       throw new Error("No se encontró el token");
     }
-
-    const response = await axios.post(`http://localhost:3000/socialAccounts/upload-video`,data, {
+    const response = await axios.post(`https://preferred-bridgette-datech-4537e683.koyeb.app/socialAccounts/upload-video`,data, {
       headers: {
         Authorization: `Bearer ${token}`,
         /* "Content-Type": "multipart/form-data", */

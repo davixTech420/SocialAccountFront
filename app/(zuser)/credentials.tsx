@@ -184,7 +184,7 @@ export default function Credential() {
       isConnected: false,
       icon: "youtube",
       color: "#FF0000",
-      authUrl: "http://192.168.0.106:3000/auth",
+      authUrl: "http://localhost:3000/auth",
     },
     {
       id: "facebook",
@@ -193,7 +193,7 @@ export default function Credential() {
       isConnected: false,
       icon: "facebook",
       color: "#1877F2",
-      authUrl: "https://api.example.com/auth/facebook",
+      authUrl: "http://localhost:3000/facebook/login",
     },
     {
       id: "twitter",

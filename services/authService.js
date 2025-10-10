@@ -1,6 +1,6 @@
 import axios from "axios";
 
-/* const API = "https://datech.alwaysdata.net/SocialAccount"; */
+/* const API = "https://preferred-bridgette-datech-4537e683.koyeb.app"; */
 const API = "http://localhost:3000";
 export const login = async (email, password) => {
   try {
